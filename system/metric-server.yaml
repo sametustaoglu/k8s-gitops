@@ -17,6 +17,12 @@ spec:
       destination:
           namespace: kube-system
           name: '{{cluster}}'
+      syncPolicy:
+        automated:
+          prune: false           # Silinen kaynaklar ArgoCD tarafından silinmez.
+          selfHeal: true          # Kubernetes'den yanlışlıkla silinen kaynakları tekrar oluşturur.
+        syncOptions:
+        - CreateNamespace=true
       project: default
       source:
         repoURL: https://kubernetes-sigs.github.io/metrics-server/
