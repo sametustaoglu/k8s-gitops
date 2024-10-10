@@ -27,6 +27,7 @@ spec:
           selfHeal: true          
         syncOptions:
         - CreateNamespace=true
+        - Prune=false
       project: default
       source:
         repoURL: https://kubernetes-sigs.github.io/metrics-server/
