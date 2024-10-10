@@ -3,6 +3,8 @@ kind: ApplicationSet
 metadata:
   name: metric-server
   namespace: argocd
+  finalizers:
+   - resources-finalizer.argocd.argoproj.io
 spec:
   generators:
     - list:
@@ -19,8 +21,8 @@ spec:
           name: '{{cluster}}'
       syncPolicy:
         automated:
-          prune: false           # Silinen kaynaklar ArgoCD tarafından silinmez.
-          selfHeal: true          # Kubernetes'den yanlışlıkla silinen kaynakları tekrar oluşturur.
+          prune: false           
+          selfHeal: true          
         syncOptions:
         - CreateNamespace=true
       project: default
