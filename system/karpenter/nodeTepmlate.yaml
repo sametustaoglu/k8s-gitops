@@ -1,0 +1,29 @@
+# apiVersion: karpenter.k8s.aws/v1alpha1
+# kind: AWSNodeTemplate
+# metadata:
+#   name: default
+# spec:
+#   subnetSelector:
+#     # should be the primary cidr block subnets
+#     karpenter.sh/discovery: "${CLUSTER_NAME}"
+#   securityGroupSelector:
+#     karpenter.sh/discovery: "${CLUSTER_NAME}"
+#   amiFamily: "AL2"
+#   userData: |
+#     #!/bin/bash
+#     echo "Running custom user data script"
+#     sudo yum install -y https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/linux_amd64/amazon-ssm-agent.rpm
+#     sudo systemctl status amazon-ssm-agent
+#   tags:
+#     dev.corp.net/app: ExampleTag
+#     karpenter.sh/discovery: "${CLUSTER_NAME}"
+#     Name: "Karpenter-Node-${CLUSTER_NAME}"
+#   # optional, configures storage devices for the instance
+#   blockDeviceMappings: # AL2 machine defaults
+#     - deviceName: /dev/xvda
+#       ebs:
+#         volumeSize: 100Gi
+#         volumeType: gp3
+#         encrypted: true
+#   # optional, configures detailed monitoring for the instance
+#   # detailedMonitoring: "..."
