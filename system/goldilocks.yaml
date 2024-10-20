@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: goldiloacks
+  name: goldilocks
   namespace: argocd
   finalizers:
    - resources-finalizer.argocd.argoproj.io
@@ -14,12 +14,12 @@ spec:
           # - cluster: cluster-name
   template:
     metadata:
-      name: '{{name}}-goldiloacks'
+      name: '{{name}}-goldilocks'
       finalizers:
       - resources-finalizer.argocd.argoproj.io
     spec:
       destination:
-          namespace: goldiloacks
+          namespace: goldilocks
           name: '{{cluster}}'
       syncPolicy:
         automated:
