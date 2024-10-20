@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: metric-server
+  name: vpa
   namespace: argocd
   finalizers:
    - resources-finalizer.argocd.argoproj.io
@@ -14,12 +14,12 @@ spec:
           # - cluster: cluster-name
   template:
     metadata:
-      name: '{{name}}-metric-server'
+      name: '{{name}}-vpa'
       finalizers:
       - resources-finalizer.argocd.argoproj.io
     spec:
       destination:
-          namespace: kube-system
+          namespace: vpa
           name: '{{cluster}}'
       syncPolicy:
         automated:
@@ -30,13 +30,12 @@ spec:
         
       project: default
       source:
-        repoURL: https://kubernetes-sigs.github.io/metrics-server/
-        targetRevision: 3.12.2
-        chart: metrics-server
+        repoURL: https://charts.fairwinds.com/stable
+        targetRevision: 4.6.0
+        chart: vpa
         helm:
           values: |
-            resources:
-              requests:
-                cpu: 100m
-                memory: 200Mi
-            args[0]: "--kubelet-insecure-tls"
+            recommender:
+              extraArgs:
+                prometheus-adress: http://dev-kube-prometheus-stack-prometheus.monitoring:9090 
+                storage: prometheus
