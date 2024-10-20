@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: metric-server
+  name: kube-prometheus-stack
   namespace: argocd
   finalizers:
    - resources-finalizer.argocd.argoproj.io
@@ -14,12 +14,12 @@ spec:
           # - cluster: cluster-name
   template:
     metadata:
-      name: '{{name}}-metric-server'
+      name: '{{name}}-kube-prometheus-stack'
       finalizers:
       - resources-finalizer.argocd.argoproj.io
     spec:
       destination:
-          namespace: kube-system
+          namespace: monitoring
           name: '{{cluster}}'
       syncPolicy:
         automated:
@@ -30,12 +30,9 @@ spec:
         
       project: default
       source:
-        repoURL: https://kubernetes-sigs.github.io/metrics-server/
-        targetRevision: 3.12.2
-        chart: metrics-server
+        repoURL: https://prometheus-community.github.io/helm-charts
+        targetRevision: 65.3.1
+        chart: kube-prometheus-stack
         helm:
           values: |
-            resources:
-              requests:
-                cpu: 100m
-                memory: 200Mi
+            
