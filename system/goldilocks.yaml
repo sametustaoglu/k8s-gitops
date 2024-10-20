@@ -32,7 +32,7 @@ spec:
       source:
         repoURL: https://charts.fairwinds.com/stable
         targetRevision: 9.0.1
-        chart: goldiloacks
+        chart: goldilocks
         helm:
           values: |
             
