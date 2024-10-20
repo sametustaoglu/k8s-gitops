@@ -35,4 +35,9 @@ spec:
         chart: goldilocks
         helm:
           values: |
-            
+            controller:
+              flags:
+                on-by-default: true
+            dashboard: 
+              flags:
+                on-by-default: true
