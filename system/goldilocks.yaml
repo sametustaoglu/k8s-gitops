@@ -1,0 +1,38 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: goldiloacks
+  namespace: argocd
+  finalizers:
+   - resources-finalizer.argocd.argoproj.io
+spec:
+  generators:
+    - list:
+        elements:
+          - cluster: in-cluster
+            name: dev
+          # - cluster: cluster-name
+  template:
+    metadata:
+      name: '{{name}}-goldiloacks'
+      finalizers:
+      - resources-finalizer.argocd.argoproj.io
+    spec:
+      destination:
+          namespace: goldiloacks
+          name: '{{cluster}}'
+      syncPolicy:
+        automated:
+          prune: false           
+          selfHeal: true          
+        syncOptions:
+        - CreateNamespace=true
+        
+      project: default
+      source:
+        repoURL: https://charts.fairwinds.com/stable
+        targetRevision: 9.0.1
+        chart: goldiloacks
+        helm:
+          values: |
+            
