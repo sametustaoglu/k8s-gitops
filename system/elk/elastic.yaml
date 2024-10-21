@@ -59,7 +59,7 @@ spec:
             antiAffinity: "soft"
             volumeClaimTemplate:
               accessModes: ["ReadWriteOnce"]
-              #storageClassName: efs-sc-dev-elk
+              storageClassName: gp2
               resources:
                 requests:
                   storage: 30Gi
