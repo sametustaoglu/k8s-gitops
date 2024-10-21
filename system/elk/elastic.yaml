@@ -35,7 +35,7 @@ spec:
         chart: elasticsearch
         helm:
           values: |
-          
+
             replicas: 1
 
             nodeSelector:
@@ -60,6 +60,7 @@ spec:
             antiAffinity: "soft"
             volumeClaimTemplate:
               accessModes: ["ReadWriteOnce"]
+              storageClassName: efs-sc
               resources:
                 requests:
                   storage: 30Gi
