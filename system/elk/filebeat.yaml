@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: elasticsearch
+  name: filebeat
   namespace: argocd
   finalizers:
    - resources-finalizer.argocd.argoproj.io
@@ -14,7 +14,7 @@ spec:
           # - cluster: cluster-name
   template:
     metadata:
-      name: '{{name}}-elasticsearch'
+      name: '{{name}}-filebeat'
       finalizers:
       - resources-finalizer.argocd.argoproj.io
     spec:
