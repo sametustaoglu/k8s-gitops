@@ -19,7 +19,7 @@ spec:
       - resources-finalizer.argocd.argoproj.io
     spec:
       destination:
-          namespace: monitoring
+          namespace: logging
           name: '{{cluster}}'
       syncPolicy:
         automated:
