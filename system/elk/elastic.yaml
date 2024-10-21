@@ -36,6 +36,8 @@ spec:
         helm:
           values: |
             replicas: 1
+            nodeSelector:
+              karpenter.sh/capacity-type: spot
 
             secret:
               enabled: true
