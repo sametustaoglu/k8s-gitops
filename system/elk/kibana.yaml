@@ -32,7 +32,7 @@ spec:
       source:
         repoURL: https://helm.elastic.co
         targetRevision: 8.5.1
-        chart: elasticsearch
+        chart: kibana
         helm:
           values: |
             elasticsearchHosts: "https://elasticsearch-master:9200"
