@@ -1,0 +1,139 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: elasticsearch
+  namespace: argocd
+  finalizers:
+   - resources-finalizer.argocd.argoproj.io
+spec:
+  generators:
+    - list:
+        elements:
+          - cluster: in-cluster
+            name: dev
+          # - cluster: cluster-name
+  template:
+    metadata:
+      name: '{{name}}-elasticsearch'
+      finalizers:
+      - resources-finalizer.argocd.argoproj.io
+    spec:
+      destination:
+          namespace: monitoring
+          name: '{{cluster}}'
+      syncPolicy:
+        automated:
+          prune: false           
+          selfHeal: true          
+        syncOptions:
+        - CreateNamespace=true
+        
+      project: default
+      source:
+        repoURL: https://helm.elastic.co
+        targetRevision: 8.5.1
+        chart: elasticsearch
+        helm:
+          values: |
+            replicas: 1
+
+logstashConfig:
+  logstash.yml: |
+    http.host: 0.0.0.0
+
+    logstashPipeline:
+      logstash.conf: |
+        input {
+          beats {
+            port => 5044
+          }
+        }
+        filter {
+          if "ERROR" in [message] {
+            grok {
+              match => {
+                "message" => "^%{LOGLEVEL:log_level} \| %{UUID:uuid} \| status_code: %{NUMBER:status_code}, error_message: %{GREEDYDATA:error_message} \| %{GREEDYDATA:traceback}$"
+              }
+            }
+          }
+          else if "INFO" in [message] {
+            grok {
+              match => {
+                "message" => "^%{LOGLEVEL:log_level}: +%{IP:client_ip}:%{NUMBER:client_port} - \"%{WORD:http_method} %{URIPATHPARAM:request_url} HTTP/%{NUMBER:http_version}\" %{NUMBER:status_code} %{WORD:status_message}$"
+              }
+            }
+          }
+        }
+
+        output {
+          elasticsearch {
+            hosts => [ "https://elasticsearch-master:9200" ]
+            ssl => true
+            manage_template => false
+            ssl_certificate_verification => true
+            index => "index-name"
+            document_type => "%{[@metadata][type]}"
+            cacert => "/usr/share/logstash/certs/ca.crt"
+            user => "${ELASTICSEARCH_USERNAME}"
+            password => "${ELASTICSEARCH_PASSWORD}" 
+          }
+        }
+
+    logstashPatternDir: "/usr/share/logstash/patterns/"
+
+    image: "docker.elastic.co/logstash/logstash"
+    imageTag: "8.5.1"
+    imagePullPolicy: "IfNotPresent"
+
+    extraEnvs:
+      - name: "ELASTICSEARCH_USERNAME"
+        valueFrom:
+          secretKeyRef:
+            name: elasticsearch-master-credentials
+            key: username
+      - name: "ELASTICSEARCH_PASSWORD"
+        valueFrom:
+          secretKeyRef:
+            name: elasticsearch-master-credentials
+            key: password
+
+
+    secretMounts:
+      - name: elasticsearch-master-certs
+        secretName: elasticsearch-master-certs
+        path: /usr/share/logstash/certs/
+
+
+    logstashJavaOpts: "-Xmx1g -Xms1g"
+
+    resources:
+      requests:
+        cpu: "100m"
+        memory: "1536Mi"
+      limits:
+        cpu: "1000m"
+        memory: "1536Mi"
+
+    volumeClaimTemplate:
+      accessModes: ["ReadWriteOnce"]
+      resources:
+        requests:
+          storage: 10Gi
+
+    podSecurityContext:
+      fsGroup: 1000
+      runAsUser: 1000
+
+    service:
+      annotations: {}
+      type: ClusterIP
+      loadBalancerIP: ""
+      ports:
+        - name: beats
+          port: 5044
+          protocol: TCP
+          targetPort: 5044
+        - name: http
+          port: 8080
+          protocol: TCP
+          targetPort: 8080
