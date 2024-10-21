@@ -35,7 +35,7 @@ spec:
         chart: elasticsearch
         helm:
           values: |
-            replicas: 3
+            replicas: 1
 
             secret:
               enabled: true
