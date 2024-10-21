@@ -39,3 +39,5 @@ spec:
               extraArgs:
                 prometheus-address: http://dev-kube-prometheus-stack-prometheus.monitoring:9090 
                 storage: prometheus
+            updater:
+              enable: false
