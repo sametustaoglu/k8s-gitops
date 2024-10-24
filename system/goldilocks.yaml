@@ -39,7 +39,6 @@ spec:
               flags:
                 on-by-default: true
                 show-all : true
-
             dashboard: 
               flags:
                 on-by-default: true
