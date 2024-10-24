@@ -38,6 +38,10 @@ spec:
             controller:
               flags:
                 on-by-default: true
+                show-lowerbound: true
+                show-upperbound: true
             dashboard: 
               flags:
                 on-by-default: true
+                show-lowerbound: true
+                show-upperbound: true
